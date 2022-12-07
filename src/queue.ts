@@ -1,3 +1,4 @@
+import { CrateMover9001Stack } from "./crate-mover-9001-stack.js";
 import { Stack } from "./stack.js";
 
 export class Queue {
@@ -18,5 +19,8 @@ export class Queue {
   }
   toStack() {
     return new Stack([...this.queue]);
+  }
+  toCrateMoverStack() {
+    return new CrateMover9001Stack([...this.queue]);
   }
 }

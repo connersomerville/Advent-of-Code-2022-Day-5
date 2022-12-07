@@ -1,6 +1,6 @@
+import { CrateMover9001Stack } from "./crate-mover-9001-stack.js";
 import { Queue } from "./queue.js";
 import { getLineReader } from "./reader.js";
-import { Stack } from "./stack.js";
 
 const args = process.argv.slice(2);
 const filePath = args[0] || "test/fixtures/input.txt";
@@ -17,7 +17,7 @@ type Instruction = {
 const EVERY_FOUR_CHARACTERS = /.{1,4}/g;
 const INSTRUCTION_DELIMITERS = /move|from|to/g;
 const items = new Map<number, Queue>();
-const stacksOfItems = new Map<number, Stack>();
+const stacksOfItems = new Map<number, CrateMover9001Stack>();
 const instructions: Instruction[] = [];
 let stackDiagramRead = false;
 
@@ -51,7 +51,7 @@ lineReader.on("line", (line) => {
 
   if (!line) {
     items.forEach((itemQueue, key) => {
-      stacksOfItems.set(key, itemQueue.toStack());
+      stacksOfItems.set(key, itemQueue.toCrateMoverStack());
     });
     return (stackDiagramRead = true);
   }
@@ -76,17 +76,16 @@ lineReader.on("close", () => {
       throw new Error("Failed to determine origin and destination");
     }
 
-    for (let index = 0; index < quantity; index++) {
-      const itemToMove = originStack.pop();
-      if (itemToMove) {
-        destinationStack.push(itemToMove);
-      }
+    const itemsToMove = originStack.pop(quantity);
+    if (itemsToMove?.length && typeof itemsToMove === "object") {
+      destinationStack.push(itemsToMove);
     }
   });
 
   console.log("\nRESULT");
   stacksOfItems.forEach((s, key) => {
-    console.log(`\nStack ${key}`);
+    console.log(`\n`);
     s.print();
+    console.log(`Stack ${key}`);
   });
 });
